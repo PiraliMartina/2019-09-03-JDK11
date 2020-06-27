@@ -51,8 +51,20 @@ public class FoodController {
 
 	@FXML
 	void doCammino(ActionEvent event) {
-		txtResult.clear();
-		txtResult.appendText("Cerco cammino peso massimo...");
+		try {
+			int passi = Integer.parseInt(txtPassi.getText());
+			String partenza = boxPorzioni.getValue();
+			
+			model.trovaBest(partenza, passi);
+			
+			txtResult.setText(String.format("Il miglior cammino trovato con %d passi ha peso %d \n", passi, model.getBestPeso()));
+			txtResult.appendText(model.getBestCammino().toString());
+			
+		} catch (NumberFormatException e) {
+			txtResult.setText("NON HAI INSERITO UN NUMERO");
+		} catch (Exception e) {
+			txtResult.setText("ERRORE!!! "+e);
+		}
 	}
 
 	@FXML
@@ -77,6 +89,7 @@ public class FoodController {
 			model.creaGrafo(C);
 
 			List<String> ls = new LinkedList<String>(model.getAllVertex());
+			ls.sort(null);
 			boxPorzioni.getItems().addAll(ls);
 			boxPorzioni.setValue(ls.get(0));
 			
