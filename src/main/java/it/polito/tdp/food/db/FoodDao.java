@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.polito.tdp.food.model.Arco;
 import it.polito.tdp.food.model.Condiment;
 import it.polito.tdp.food.model.Food;
 import it.polito.tdp.food.model.Portion;
@@ -107,6 +109,91 @@ public class FoodDao {
 			return null ;
 		}
 
+	}
+	
+	public List<String> getAllPortion (){
+		String sql = "SELECT DISTINCT portion_display_name FROM `portion` ORDER BY portion_display_name" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			List<String> list = new ArrayList<>() ;
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(res.getString(1));
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+
+	}
+	
+	public List<String> getAllVertex(int C){
+		String sql = "SELECT DISTINCT portion_display_name FROM `portion` WHERE calories<?" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, C);
+			List<String> list = new ArrayList<>() ;
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(res.getString(1).toLowerCase());
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<Arco> getAllEdges(int C){
+		String sql = "SELECT p1.portion_display_name, p2.portion_display_name, COUNT(p1.food_code) " + 
+				"FROM `portion` AS p1, `portion` AS p2 " + 
+				"WHERE p1.food_code=p2.food_code " + 
+				"AND p1.portion_display_name IN (SELECT DISTINCT portion_display_name FROM `portion` WHERE calories<?) " + 
+				"AND p2.portion_display_name IN (SELECT DISTINCT portion_display_name FROM `portion` WHERE calories<?) " + 
+				"AND p1.portion_display_name<p2.portion_display_name " + 
+				"GROUP BY p1.portion_display_name, p2.portion_display_name" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, C);
+			st.setInt(2, C);
+			List<Arco> list = new ArrayList<>() ;
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					list.add(new Arco(res.getString(1).toLowerCase(), res.getString(2).toLowerCase(), res.getInt(3)));
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
 	}
 	
 	

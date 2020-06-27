@@ -60,7 +60,7 @@ public class Portion {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((portion_id == null) ? 0 : portion_id.hashCode());
+		result = prime * result + ((portion_display_name == null) ? 0 : portion_display_name.hashCode());
 		return result;
 	}
 
@@ -73,10 +73,10 @@ public class Portion {
 		if (getClass() != obj.getClass())
 			return false;
 		Portion other = (Portion) obj;
-		if (portion_id == null) {
-			if (other.portion_id != null)
+		if (portion_display_name == null) {
+			if (other.portion_display_name != null)
 				return false;
-		} else if (!portion_id.equals(other.portion_id))
+		} else if (!portion_display_name.equals(other.portion_display_name))
 			return false;
 		return true;
 	}
